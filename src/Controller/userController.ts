@@ -2,7 +2,15 @@ import prisma from "../db/db.js";
 import { Request, Response } from "express";
 
 export const getUsers = async (req: Request, res: Response) => {
-  const users = await prisma.user.findMany();
+  const users = await prisma.user.findMany({
+    include: {
+      post: {
+        select: {
+          title: true,
+        },
+      },
+    },
+  });
   res.status(200).json({
     success: true,
     message: "Users fetched successfully",
@@ -15,6 +23,9 @@ export const getUser = async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({
     where: {
       id: Number(userId),
+    },
+    include: {
+      post: true,
     },
   });
   res.status(200).json({

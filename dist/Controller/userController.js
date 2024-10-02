@@ -6,7 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = void 0;
 const db_js_1 = __importDefault(require("../db/db.js"));
 const getUsers = async (req, res) => {
-    const users = await db_js_1.default.user.findMany();
+    const users = await db_js_1.default.user.findMany({
+        include: {
+            post: {
+                select: {
+                    title: true,
+                },
+            },
+        },
+    });
     res.status(200).json({
         success: true,
         message: "Users fetched successfully",
@@ -19,6 +27,9 @@ const getUser = async (req, res) => {
     const user = await db_js_1.default.user.findUnique({
         where: {
             id: Number(userId),
+        },
+        include: {
+            post: true,
         },
     });
     res.status(200).json({
